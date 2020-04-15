@@ -22,9 +22,11 @@ def snake(block_size, snakelist):
 font = pygame.font.SysFont(None, 25)
 
 
-def message(msj, color):
+def message(msj, score, color):
     screen_text = font.render(msj, True, color)
+    score_text = font.render(score, True, color)
     gamedisplay.blit(screen_text, [width / 2, hight / 2])
+    gamedisplay.blit(score_text, [width / 2, hight / 1.7])
 
 def game_score(score, color):
     screen_text = font.render(str(score), True, color)
@@ -45,7 +47,7 @@ def gameloop(score):
     while not gameexit:
         while gameover == True:
             gamedisplay.fill(white)
-            message("do you want to continue : C or Quit : Q", red)
+            message("do you want to continue : C or Quit : Q", "Your Score: "+str(score), red)
             pygame.display.update()
 
             for event in pygame.event.get():
