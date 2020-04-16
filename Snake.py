@@ -11,12 +11,19 @@ black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 100, 0)
 block_size = 10
+bullet_block_size = 10
 fps = pygame.time.Clock()
 score = 0
 
+
 def snake(block_size, snakelist):
     for xny in snakelist:
+        # xny[0] and xny[1] are x and y coordinates respectively of left top corner of rectangle.
         pygame.draw.rect(gamedisplay, green, [xny[0], xny[1], block_size, block_size])
+
+
+def bullet(bullet_block_size, x, y):
+    pygame.draw.rect(gamedisplay, black, [x, y, bullet_block_size, bullet_block_size])
 
 
 font = pygame.font.SysFont(None, 25)
@@ -36,10 +43,13 @@ def game_score(score, color):
 def gameloop(score):
     gameexit = False
     gameover = False
+    bullet_fire = False
     x = width / 2
     y = hight / 2
     x_change = 0
     y_change = 0
+    bullet_x_change = 0
+    bullet_y_change = 0
     snakelist = []
     snakelength = 1
     applex = round(random.randrange(0, width - block_size) / 10.0) * 10.0
@@ -61,7 +71,7 @@ def gameloop(score):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                gsmeexit = True
+                gameexit = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     x_change = -block_size
@@ -75,18 +85,41 @@ def gameloop(score):
                 elif event.key == pygame.K_DOWN:
                     y_change = +block_size
                     x_change = 0
+                elif event.key == pygame.K_SPACE:
+                    bullet_fire = True
+                    bullet_y_change = y_change
+                    bullet_x_change = x_change
+
         if x < 0 or x >= width or y < 0 or y >= hight:
             gameover = True
 
         x += x_change
         y += y_change
+        if not bullet_fire:
+            bullet_x = x
+            bullet_y = y
+            bullet_fire = True
+
+        bullet_x += 1.5*bullet_x_change
+        bullet_y += 1.5*bullet_y_change
+
+
+        if bullet_x <= 0:
+            bullet_x = width
+        elif bullet_x >= width:
+            bullet_x = 0
+        elif bullet_y == 0:
+            bullet_y = hight
+        elif bullet_y >= hight:
+            bullet_y = 0
+
+
         gamedisplay.fill(white)
         pygame.draw.rect(gamedisplay, red, [applex, appley, block_size, block_size])
         snakehead = []
         snakehead.append(x)
         snakehead.append(y)
         snakelist.append(snakehead)
-
         if len(snakelist) > snakelength:
             del snakelist[0]
         for eachsegment in snakelist[:-1]:
@@ -94,8 +127,9 @@ def gameloop(score):
                 gameover = True
         game_score(score, black)
         snake(block_size, snakelist)
+        bullet(bullet_block_size, bullet_x, bullet_y)
         pygame.display.update()
-        if x == applex and y == appley:
+        if bullet_x == applex and bullet_y == appley and bullet_fire == True:
             applex = round(random.randrange(0, width - block_size) / 10.0) * 10.0
             appley = round(random.randrange(0, hight - block_size) / 10.0) * 10.0
             snakelength += 1
