@@ -35,10 +35,12 @@ def message(msj, score, color):
     gamedisplay.blit(screen_text, [width / 2, hight / 2])
     gamedisplay.blit(score_text, [width / 2, hight / 1.7])
 
+
 def game_score(score, color):
     screen_text = font.render(str(score), True, color)
     gamedisplay.blit(screen_text, [10, 10])
     pygame.display.flip()
+
 
 def gameloop(score):
     gameexit = False
@@ -57,7 +59,7 @@ def gameloop(score):
     while not gameexit:
         while gameover == True:
             gamedisplay.fill(white)
-            message("do you want to continue : C or Quit : Q", "Your Score: "+str(score), red)
+            message("do you want to continue : C or Quit : Q", "Your Score: " + str(score), red)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -95,14 +97,13 @@ def gameloop(score):
 
         x += x_change
         y += y_change
+
         if not bullet_fire:
             bullet_x = x
             bullet_y = y
-            bullet_fire = True
 
-        bullet_x += 1.5*bullet_x_change
-        bullet_y += 1.5*bullet_y_change
-
+        bullet_x += 1 * bullet_x_change
+        bullet_y += 1* bullet_y_change
 
         if bullet_x <= 0:
             bullet_x = width
@@ -113,7 +114,6 @@ def gameloop(score):
         elif bullet_y >= hight:
             bullet_y = 0
 
-
         gamedisplay.fill(white)
         pygame.draw.rect(gamedisplay, red, [applex, appley, block_size, block_size])
         snakehead = []
@@ -122,9 +122,12 @@ def gameloop(score):
         snakelist.append(snakehead)
         if len(snakelist) > snakelength:
             del snakelist[0]
-        for eachsegment in snakelist[:-1]:
-            if eachsegment == snakehead:
-                gameover = True
+
+        """Below code is for snake don't bite himself"""
+        # for eachsegment in snakelist[:-1]:
+        #     if eachsegment == snakehead:
+        #         gameover = True
+
         game_score(score, black)
         snake(block_size, snakelist)
         bullet(bullet_block_size, bullet_x, bullet_y)
@@ -141,4 +144,3 @@ def gameloop(score):
 
 
 gameloop(score)
-
